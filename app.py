@@ -1,27 +1,24 @@
 import os
 import numpy as np
 import tensorflow as tf
+import gdown  # Import gdown to download files from Google Drive
 from flask import Flask, request, jsonify, render_template
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 
-# Ensure required libraries are installed
-try:
-    import flask
-    import tensorflow
-    import numpy
-except ImportError as e:
-    print("Missing dependencies. Installing...")
-    os.system("pip install flask tensorflow numpy")
-
 # Initialize Flask app
 app = Flask(__name__)
 
-# Load the trained model (Ensure the model file is available)
+# Google Drive file ID (Extract from shareable link)
+FILE_ID = "1g7ShOzQjH_ueUv2RT_B-pcerAifNd25A"
 MODEL_PATH = "blood_group_vgg16_model.h5"
-if not os.path.exists(MODEL_PATH):
-    raise FileNotFoundError(f"Model file '{MODEL_PATH}' not found. Please download it before running the app.")
 
+# Download model if not available locally
+if not os.path.exists(MODEL_PATH):
+    print("Downloading model from Google Drive...")
+    gdown.download(f"https://drive.google.com/uc?id={FILE_ID}", MODEL_PATH, quiet=False)
+
+# Load the trained model
 model = load_model(MODEL_PATH)
 
 # Blood group labels
